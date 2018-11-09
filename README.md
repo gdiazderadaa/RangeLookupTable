@@ -21,7 +21,7 @@ With RangeLookupTable it's as easy as this:
 var table = new RangeLookupTable<decimal, string>();
 table.Add(27000m, 35000m, "A");
 table.Add(35000.1m, 45000m, "B");
-table.Add(45000.1m, 58000m, "c");
+table.Add(45000.1m, 58000m, "C");
 table.Add(58000.1m, 80000m, "D");
 table.Add(80000.1m, 106000m, "E");
 table.Add(106000.1m, 212000m, "F");
