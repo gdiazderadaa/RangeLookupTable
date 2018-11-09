@@ -2,23 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace RangeLookupTable
 {
-	public class RangeLookupTable<T,U> where T:IComparable
+	public class RangeLookupTable<T, U> where T : IComparable
 	{
-		private SortedList<Range<T>, U> _table;
-		public SortedList<Range<T>, U> Table => _table;
+		public SortedList<Range<T>, U> Table { get; }
 		public int LookupIterations = 0;
 
-		public RangeLookupTable()
-		{
-			_table = new SortedList<Range<T>, U>();
-		}
+		public RangeLookupTable() => Table = new SortedList<Range<T>, U>();
 
 
-		public int Count => _table.Count;
+		public int Count => Table.Count;
 
 		/// <summary>
 		/// Adds a new entry to the table
@@ -26,10 +21,7 @@ namespace RangeLookupTable
 		/// <param name="lower">The range lower value</param>
 		/// <param name="upper">The range upper value</param>
 		/// <param name="value">The actual value</param>
-		public void Add(T lower, T upper, U value)
-		{
-			_table.Add(new Range<T>(lower, upper), value);
-		}
+		public void Add(T lower, T upper, U value) => Table.Add(new Range<T>(lower, upper), value);
 
 
 		/// <summary>
@@ -42,12 +34,18 @@ namespace RangeLookupTable
 		/// <returns></returns>
 		public U GetValue(T lookupValue, int i = 0, int lIndex = 0, int uIndex = 0)
 		{
-			LookupIterations++;
+			LookupIterations = (i == lIndex && uIndex == i) ? 1 : LookupIterations + 1;
+
+			// If the number of iterations is greater than the elements, the item is not in the table
+			// i.e Given the ranges [0,3], [5,8], lookup the item 4
+			if (Table.Count == 0 || LookupIterations > Table.Count) return default(U);
 			var lowerIndex = lIndex;
-			var upperIndex = uIndex == 0 ? _table.Count - 1 : uIndex;
+			var upperIndex = uIndex == 0 ? Table.Count - 1 : uIndex;
 			var index = i == 0 ? upperIndex / 2 : i;
 
-			var element = _table.ElementAt(index);
+			if (index >= Table.Count || index < 0) return default(U);
+
+			var element = Table.ElementAt(index);
 			if (element.Key.IsInRange(lookupValue))
 			{
 				return element.Value;
@@ -77,6 +75,7 @@ namespace RangeLookupTable
 				}
 
 			}
+
 			return GetValue(lookupValue, index, lowerIndex, upperIndex);
 		}
 
@@ -89,7 +88,7 @@ namespace RangeLookupTable
 		public override string ToString()
 		{
 			var result = new StringBuilder();
-			foreach (var item in _table)
+			foreach (var item in Table)
 			{
 				result.AppendLine($"{item.Key}: {item.Value}");
 			}

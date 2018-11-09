@@ -36,6 +36,16 @@ namespace RangeLookupTable.Tests
 			Assert.IsTrue(table.GetValue(2) == "FAIL");
 			Assert.IsTrue(table.GetValue(3) == "FAIL");
 			Assert.IsTrue(table.GetValue(4) == "FAIL");
+
+			Assert.IsTrue(table.GetValue(5) == default(string));
+			Assert.IsTrue(table.GetValue(-1) == default(string));
+
+			table.Add(6, 8, "PASS");
+			Assert.IsTrue(table.GetValue(6) == "PASS");
+			Assert.IsTrue(table.GetValue(7) == "PASS");
+			Assert.IsTrue(table.GetValue(8) == "PASS");
+
+			Assert.IsTrue(table.GetValue(5) == default(string));
 		}
 	}
 }
